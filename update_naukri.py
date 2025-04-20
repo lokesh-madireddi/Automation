@@ -21,7 +21,7 @@ chrome_options.add_argument(
 
 # ==== Initialize Driver ====
 driver = webdriver.Chrome(options=chrome_options)
-wait = WebDriverWait(driver, 15)
+wait = WebDriverWait(driver, 20)
 
 try:
     print("Opening Naukri login page...")
@@ -57,10 +57,12 @@ try:
 
     # print(f"Current URL: {driver.current_url}")
     print("Till Here")
-    upload_button = driver.find_element(By.XPATH, "//input[@id='attachCV']")
+    #upload_button = driver.find_element(By.XPATH, "//input[@id='attachCV']")
+    upload_button = wait.until(EC.element_to_be_clickable((By.XPATH, "//input[@type='file' and @id='attachCV']")))
     upload_button.send_keys(resume_path)
     print("Then Here")
     #upload_input = wait.until(EC.presence_of_element_located((By.XPATH, '//input[@id="attachCV"]')))
+    #upload_button = wait.until(EC.element_to_be_clickable((By.ID, "attachCV")))
     #upload_input.send_keys(resume_path)
 
     time.sleep(5)
