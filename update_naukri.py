@@ -31,7 +31,7 @@ try:
     print("Waiting for login fields...")
     wait.until(EC.presence_of_element_located((By.ID, "usernameField")))
 
-    username = os.getenv("NAUKRI_USERNAME")
+    username = os.getenv("NAUKRI_EMAIL")
     password = os.getenv("NAUKRI_PASSWORD")
 
     if not username or not password:
