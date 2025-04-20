@@ -55,8 +55,12 @@ try:
     if not os.path.exists(resume_path):
         raise FileNotFoundError(f"❌ Resume file not found at {resume_path}")
 
-    upload_input = wait.until(EC.presence_of_element_located((By.XPATH, '//input[@id="attachCV"]')))
-    upload_input.send_keys(resume_path)
+    # print(f"Current URL: {driver.current_url}")
+    upload_button = driver.find_element(By.XPATH, "//input[@id='attachCV']")
+    upload_button.send_keys(resume_path)
+
+    #upload_input = wait.until(EC.presence_of_element_located((By.XPATH, '//input[@id="attachCV"]')))
+    #upload_input.send_keys(resume_path)
 
     time.sleep(5)
     print("📤 Resume uploaded successfully!")
