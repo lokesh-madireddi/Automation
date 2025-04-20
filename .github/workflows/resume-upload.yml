@@ -26,13 +26,15 @@ jobs:
 
     - name: Download ChromeDriver
       run: |
-        # Uninstall any existing ChromeDriver from PATH
-        rm -f /usr/local/bin/chromedriver
-        
-        # Download ChromeDriver that matches Chrome version 135.0.7049.95
-        wget https://chromedriver.storage.googleapis.com/135.0.7049.95/chromedriver_linux64.zip
-        unzip chromedriver_linux64.zip
-        mv chromedriver /usr/local/bin/
+        sudo apt-get install -y software-properties-common
+        wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
+        sudo sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list'
+        sudo apt-get update
+        sudo apt-get install -y google-chrome-stable
+        wget "https://storage.googleapis.com/chrome-for-testing-public/135.0.7049.42/linux64/chromedriver-linux64.zip"
+        unzip chromedriver-linux64.zip
+        sudo mv chromedriver-linux64/chromedriver /usr/local/bin/
+        sudo chmod +x /usr/local/bin/chromedriver
 
     - name: Run the script
       env:
