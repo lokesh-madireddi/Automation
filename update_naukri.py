@@ -57,8 +57,11 @@ try:
 
     # print(f"Current URL: {driver.current_url}")
     print("Till Here")
-    #upload_button = driver.find_element(By.XPATH, "//input[@id='attachCV']")
-    upload_button = wait.until(EC.element_to_be_clickable((By.XPATH, "//input[@type='file' and @id='attachCV']")))
+    # After navigating to the profile page
+    print(f"Navigated to Profile Page: {driver.current_url}")
+
+    upload_button = driver.find_element(By.XPATH, "//input[@id='attachCV']")
+    #upload_button = wait.until(EC.element_to_be_clickable((By.XPATH, "//input[@type='file' and @id='attachCV']")))
     upload_button.send_keys(resume_path)
     print("Then Here")
     #upload_input = wait.until(EC.presence_of_element_located((By.XPATH, '//input[@id="attachCV"]')))
