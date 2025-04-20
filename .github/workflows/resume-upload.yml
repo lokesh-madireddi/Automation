@@ -1,0 +1,42 @@
+name: Update Naukri Profile
+
+on:
+  push:
+    branches:
+      - main  # This will trigger the workflow when code is pushed to the main branch
+  schedule:
+    - cron: '0 0 * * *'  # This will run the script every day at midnight (UTC)
+
+jobs:
+  run_script:
+    runs-on: ubuntu-latest  # You can change this to a different environment (e.g., windows-latest)
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2  # Checks out the repository
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.8'  # You can change this to the Python version you use
+
+    - name: Install dependencies
+      run: |
+        pip install selenium
+
+    - name: Download ChromeDriver
+      run: |
+        # Uninstall any existing ChromeDriver from PATH
+        rm -f /usr/local/bin/chromedriver
+        
+        # Download ChromeDriver that matches Chrome version 135.0.7049.95
+        wget https://chromedriver.storage.googleapis.com/135.0.7049.95/chromedriver_linux64.zip
+        unzip chromedriver_linux64.zip
+        mv chromedriver /usr/local/bin/
+
+    - name: Run the script
+      env:
+        NAUKRI_USERNAME: ${{ secrets.NAUKRI_EMAIL }}
+        NAUKRI_PASSWORD: ${{ secrets.NAUKRI_PASSWORD }}
+      run: |
+        python update_naukri.py  # Run your Python script
