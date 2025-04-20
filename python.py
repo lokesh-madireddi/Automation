@@ -1,24 +1,44 @@
 import os
-import datetime
+from dotenv import load_dotenv
+from playwright.sync_api import sync_playwright
+import subprocess
 
-# Define the fireworks pattern
-fireworks = [
-    "   X   ",  
-    "  X X  ",  
-    " X   X ",  
-    "X  X  X",  
-    " X   X ",  
-    "  X X  ",  
-    "   X   "
-]
+load_dotenv()
 
-# Set the starting date for commits
-start_date = datetime.date(2024, 1, 1)
+NAUKRI_EMAIL = os.getenv("NAUKRI_EMAIL")
+NAUKRI_PASSWORD = os.getenv("NAUKRI_PASSWORD")
+GITHUB_REPO_URL = os.getenv("GITHUB_REPO_URL")
+RESUME_FILE_PATH = os.getenv("RESUME_FILE_PATH")
 
-# Loop through the pattern and create commits
-for i, row in enumerate(fireworks):
-    for j, cell in enumerate(row):
-        if cell == 'X':  # If this position should have a commit
-            commit_date = start_date + datetime.timedelta(days=j + (i * 7))  
-            os.system(f'GIT_COMMITTER_DATE="{commit_date}" git commit --allow-empty -m "Fireworks commit" --date="{commit_date}"')
-            os.system('git push')  # Push commit to GitHub
+def clone_resume():
+    if not os.path.exists("resume_repo"):
+        subprocess.run(["git", "clone", GITHUB_REPO_URL, "resume_repo"])
+    else:
+        subprocess.run(["git", "-C", "resume_repo", "pull"])
+
+def upload_resume(playwright):
+    browser = playwright.chromium.launch(headless=False)
+    page = browser.new_page()
+    
+    # Go to Naukri Login Page
+    page.goto("https://www.naukri.com/mnjuser/login")
+    page.fill("input[placeholder='Enter your active Email ID / Username']", NAUKRI_EMAIL)
+    page.fill("input[placeholder='Enter your password']", NAUKRI_PASSWORD)
+    page.click("button[type='submit']")
+
+    page.wait_for_timeout(5000)  # Wait for login to complete, adjust as needed
+
+    # Navigate to Profile > Resume Upload Section
+    page.goto("https://www.naukri.com/mnjuser/profile")
+    page.wait_for_selector("input[type='file']")
+
+    resume_path = os.path.join("resume_repo", RESUME_FILE_PATH)
+    page.set_input_files("input[type='file']", resume_path)
+
+    page.wait_for_timeout(5000)
+    browser.close()
+
+if __name__ == "__main__":
+    clone_resume()
+    with sync_playwright() as playwright:
+        upload_resume(playwright)
