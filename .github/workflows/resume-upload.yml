@@ -38,7 +38,7 @@ jobs:
 
     - name: Run the script
       env:
-        NAUKRI_USERNAME: ${{ secrets.NAUKRI_EMAIL }}
+        NAUKRI_EMAIL: ${{ secrets.NAUKRI_EMAIL }}
         NAUKRI_PASSWORD: ${{ secrets.NAUKRI_PASSWORD }}
       run: |
         python update_naukri.py  # Run your Python script
